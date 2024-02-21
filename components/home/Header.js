@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import React, { useState } from "react";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 
 const Header = () => {
   const [logoOpacity, setLogoOpacity] = useState(1);
@@ -15,10 +15,11 @@ const Header = () => {
         }}
         onPressIn={() => {
           setLogoOpacity(0.5);
-        }}>
+        }}
+      >
         <Image
           style={{ ...styles.logo, opacity: logoOpacity }}
-          source={require('../../assets/header-logo.png')}
+          source={require("../../assets/header-logo.png")}
         />
       </Pressable>
 
@@ -29,9 +30,10 @@ const Header = () => {
           }}
           onPressIn={() => {
             setIconOpacity(0.5);
-          }}>
+          }}
+        >
           <Image
-            source={require('../../assets/add.png')}
+            source={require("../../assets/add.png")}
             style={{ ...styles.icon, opacity: iconOpacity }}
           />
         </Pressable>
@@ -41,9 +43,10 @@ const Header = () => {
           }}
           onPressIn={() => {
             setHeartOpacity(0.5);
-          }}>
+          }}
+        >
           <Image
-            source={require('../../assets/heart.png')}
+            source={require("../../assets/heart.png")}
             style={{ ...styles.icon, opacity: heartOpacity }}
           />
         </Pressable>
@@ -53,12 +56,13 @@ const Header = () => {
           }}
           onPressIn={() => {
             setSentOpacity(0.5);
-          }}>
-            <View style={styles.unreadBadge}>
-                <Text style={styles.unreadBadgeText}>11</Text>
-            </View>
+          }}
+        >
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadBadgeText}>11</Text>
+          </View>
           <Image
-            source={require('../../assets/sent.png')}
+            source={require("../../assets/sent.png")}
             style={{ ...styles.icon, opacity: sentOpacity }}
           />
         </Pressable>
@@ -69,46 +73,46 @@ const Header = () => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
     marginHorizontal: 20,
   },
 
   iconsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
 
   logo: {
     width: 100,
     height: 50,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
 
   icon: {
     width: 30,
     height: 30,
     marginLeft: 10,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
 
   unreadBadge: {
-    backgroundColor: '#FF3250',
-    position: 'absolute',
+    backgroundColor: "#FF3250",
+    position: "absolute",
     left: 20,
     bottom: 18,
     width: 25,
     height: 18,
     borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 100,
   },
 
   unreadBadgeText: {
-    color: 'white',
-    fontWeight: '600',
-  }
+    color: "white",
+    fontWeight: "600",
+  },
 });
 
 export default Header;

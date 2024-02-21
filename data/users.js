@@ -19,4 +19,8 @@ export const USERS = [
         user: 'aplasticplant',
         image: 'https://i.imgur.com/l8GimTF.jpg'
     },
+    {
+        user: 'gaviotiñas',
+        image: 'https://i.imgur.com/NeVsuxu.jpg'
+    },
 ]
