@@ -1,6 +1,6 @@
 import * as React from "react";
-import HomeSreen from "./screens/HomeSreen";
+import SignedInStack from "./navigation";
 
 export default function App() {
-  return <HomeSreen />;
+  return <SignedInStack />;
 }

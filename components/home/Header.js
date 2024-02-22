@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 
-const Header = () => {
+const Header = ({ navigation }) => {
   const [logoOpacity, setLogoOpacity] = useState(1);
   const [iconOpacity, setIconOpacity] = useState(1);
   const [heartOpacity, setHeartOpacity] = useState(1);
@@ -25,6 +25,9 @@ const Header = () => {
 
       <View style={styles.iconsContainer}>
         <Pressable
+          onPress={() => {
+            navigation.push("NewPostScreen");
+          }}
           onPressOut={() => {
             setIconOpacity(1);
           }}
