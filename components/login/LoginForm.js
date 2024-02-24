@@ -4,9 +4,11 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import { TextInput } from "react-native-gesture-handler";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -25,7 +27,15 @@ const LoginForm = ({ navigation }) => {
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={(values) => {
-          console.log(values);
+          const auth = getAuth();
+          signInWithEmailAndPassword(auth, values.email, values.password)
+            .then((userCredential) => {
+              // Signed up
+              console.log("VALIDAD Y DENTRO");
+            })
+            .catch((error) => {
+              Alert.alert(error.message);
+            });
         }}
         validationSchema={LoginFormSchema}
         validateOnMount={true}

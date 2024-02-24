@@ -4,9 +4,13 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { db } from "../../firebase";
+import { collection, setDoc, doc } from "firebase/firestore";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -21,12 +25,43 @@ const SignupForm = ({ navigation }) => {
       .min(6, "Your password has to have at least 8 characters"),
   });
 
+  const getRandomProfilePicture = async () => {
+    const response = await fetch("https://api.randomuser.me/");
+    const data = await response.json();
+    return data.results[0].picture.large;
+  };
+
+  const onSignup = async (email, username, password) => {
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const docRef = await setDoc(
+        doc(collection(db, "users"), userCredential.user.email),
+        {
+          owner_uid: userCredential.user.uid,
+          username: username,
+          email: userCredential.user.email,
+          profile_picture: await getRandomProfilePicture(),
+        }
+      );
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+    // Signed up
+    console.log("VALIDAD Y DENTRO");
+  };
+
   return (
     <View style={styles.wrapper}>
       <Formik
         initialValues={{ email: "", username: "", password: "" }}
         onSubmit={(values) => {
-          console.log(values);
+          onSignup(values.email, values.username, values.password);
         }}
         validationSchema={SignupFormSchema}
         validateOnMount={true}

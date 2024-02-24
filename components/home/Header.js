@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
+import { getAuth, signOut } from "firebase/auth";
 
 const Header = ({ navigation }) => {
   const [logoOpacity, setLogoOpacity] = useState(1);
@@ -10,6 +11,10 @@ const Header = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Pressable
+        onPress={() => {
+          const auth = getAuth();
+          signOut(auth);
+        }}
         onPressOut={() => {
           setLogoOpacity(1);
         }}
