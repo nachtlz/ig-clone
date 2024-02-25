@@ -54,10 +54,11 @@ const Post = ({ post }) => {
           : arrayRemove(user.email),
       });
 
-      const updatedPost = { ...post, 
+      const updatedPost = {
+        ...post,
         likes_by_users: currentLikesStatus
           ? [...post.likes_by_users, user.email]
-          : post.likes_by_users.filter(email => email !== user.email)
+          : post.likes_by_users.filter((email) => email !== user.email),
       };
       setCurrentPost(updatedPost);
     } catch (error) {
@@ -72,15 +73,14 @@ const Post = ({ post }) => {
       <PostImage post={currentPost} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
         <PostFooter post={currentPost} handleLike={handleLike} />
-        <Likes post={currentPost} /> 
-        <Caption post={currentPost} /> 
-        <CommentsSection post={currentPost} /> 
+        <Likes post={currentPost} />
+        <Caption post={currentPost} />
+        <CommentsSection post={currentPost} />
         <Comments post={currentPost} />
       </View>
     </View>
   );
 };
-
 
 const PostHeader = ({ post }) => (
   <View
@@ -117,21 +117,42 @@ const PostImage = ({ post }) => (
   </View>
 );
 
-const PostFooter = ({ handleLike, post }) => (
-  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-    <View style={styles.leftFooterIconsContainer}>
-      <TouchableOpacity onPress={() => handleLike(post)}>
-        <Image source={postFooterIcons[0].imageUrl} style={styles.footerIcon} />
-      </TouchableOpacity>
-      <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[1].imageUrl} />
-      <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[2].imageUrl} />
-    </View>
+const PostFooter = ({ handleLike, post }) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-    <View>
-      <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[3].imageUrl} />
+  return (
+    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={styles.leftFooterIconsContainer}>
+        <TouchableOpacity onPress={() => handleLike(post)}>
+          <Image
+            source={
+              !post.likes_by_users.includes(user.email)
+                ? postFooterIcons[0].imageUrl
+                : postFooterIcons[0].likedImageUrl
+            }
+            style={styles.footerIcon}
+          />
+        </TouchableOpacity>
+        <Icon
+          imgStyle={styles.footerIcon}
+          imgUrl={postFooterIcons[1].imageUrl}
+        />
+        <Icon
+          imgStyle={styles.footerIcon}
+          imgUrl={postFooterIcons[2].imageUrl}
+        />
+      </View>
+
+      <View>
+        <Icon
+          imgStyle={styles.footerIcon}
+          imgUrl={postFooterIcons[3].imageUrl}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const Icon = ({ imgStyle, imgUrl }) => (
   <Pressable>
