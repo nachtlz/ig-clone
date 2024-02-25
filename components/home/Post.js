@@ -1,6 +1,22 @@
-import { View, Text, Image, StyleSheet, Pressable } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
 import { Divider } from "react-native-elements";
+import { getAuth } from "firebase/auth";
+import {
+  collection,
+  doc,
+  arrayUnion,
+  arrayRemove,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../firebase";
 
 const postFooterIcons = [
   {
@@ -23,21 +39,48 @@ const postFooterIcons = [
 ];
 
 const Post = ({ post }) => {
+  const [currentPost, setCurrentPost] = useState(post);
+
+  const handleLike = async (post) => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const currentLikesStatus = !post.likes_by_users.includes(user.email);
+      const userDocRef = doc(collection(db, "users"), post.owner_email);
+      const postDocRef = doc(collection(userDocRef, "posts"), post.id);
+      await updateDoc(postDocRef, {
+        likes_by_users: currentLikesStatus
+          ? arrayUnion(user.email)
+          : arrayRemove(user.email),
+      });
+
+      const updatedPost = { ...post, 
+        likes_by_users: currentLikesStatus
+          ? [...post.likes_by_users, user.email]
+          : post.likes_by_users.filter(email => email !== user.email)
+      };
+      setCurrentPost(updatedPost);
+    } catch (error) {
+      console.error("Error al actualizar los likes:", error);
+    }
+  };
+
   return (
     <View style={{ marginBottom: 30 }}>
       <Divider width={1} orientation="vertical" />
-      <PostHeader post={post} />
-      <PostImage post={post} />
+      <PostHeader post={currentPost} />
+      <PostImage post={currentPost} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
-        <PostFooter />
-        <Likes post={post} />
-        <Caption post={post} />
-        <CommentsSection post={post} />
-        <Comments post={post} />
+        <PostFooter post={currentPost} handleLike={handleLike} />
+        <Likes post={currentPost} /> 
+        <Caption post={currentPost} /> 
+        <CommentsSection post={currentPost} /> 
+        <Comments post={currentPost} />
       </View>
     </View>
   );
 };
+
 
 const PostHeader = ({ post }) => (
   <View
@@ -74,10 +117,12 @@ const PostImage = ({ post }) => (
   </View>
 );
 
-const PostFooter = () => (
+const PostFooter = ({ handleLike, post }) => (
   <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
     <View style={styles.leftFooterIconsContainer}>
-      <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[0].imageUrl} />
+      <TouchableOpacity onPress={() => handleLike(post)}>
+        <Image source={postFooterIcons[0].imageUrl} style={styles.footerIcon} />
+      </TouchableOpacity>
       <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[1].imageUrl} />
       <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[2].imageUrl} />
     </View>
@@ -97,7 +142,7 @@ const Icon = ({ imgStyle, imgUrl }) => (
 const Likes = ({ post }) => (
   <View style={{ flexDirection: "row", marginTop: 4 }}>
     <Text style={{ color: "white", fontWeight: "600" }}>
-      {post.likes.toLocaleString("en")} likes
+      {post.likes_by_users.length.toLocaleString("en")} likes
     </Text>
   </View>
 );

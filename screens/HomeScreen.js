@@ -5,25 +5,30 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/home/Header";
 import Stories from "../components/home/Stories";
 import Post from "../components/home/Post";
-import { POSTS } from "../data/posts";
 import BottomTabs, { bottomTabIcons } from "../components/home/BottomTabs";
-import { collectionGroup, query, where, getDocs } from "firebase/firestore";
+import { collectionGroup, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
-import { useEffect } from "react";
 
 const HomeSreen = ({ navigation }) => {
+  const [posts, setPosts] = useState([]);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const posts = query(collectionGroup(db, "posts"));
-        const querySnapshot = await getDocs(posts);
+        const postsQuery = query(
+          collectionGroup(db, "posts"),
+          orderBy("createAt", "desc")
+        );
+
+        const querySnapshot = await getDocs(postsQuery);
+        const postsData = [];
         querySnapshot.forEach((doc) => {
-          console.log(doc.id, " => ", doc.data());
+          postsData.push({ id: doc.id, ...doc.data() });
         });
+        setPosts(postsData);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -37,7 +42,7 @@ const HomeSreen = ({ navigation }) => {
       <Header navigation={navigation} />
       <Stories />
       <ScrollView>
-        {POSTS.map((post, index) => (
+        {posts.map((post, index) => (
           <Post post={post} key={index} />
         ))}
       </ScrollView>
